@@ -1,17 +1,11 @@
-# BBQ Manager — MVP (Supabase + HTML/JS)
-Este paquete contiene un MVP funcional:
-- *Pantallas*: crear/entrar evento (código), Menú (contadores), Tareas, Gastos, Resumen.
-- *Persistencia*: Supabase (Postgres) vía `@supabase/supabase-js` en el navegador.
-- *Estado*: `localStorage` guarda tu `event` y `me`.
+# BBQ Manager — MVP completo unificado
+Incluye: Menú, Tareas (con realizadores múltiples), Gastos/Balance y Resumen.
 
-## Uso
-1) Ejecuta `db_mvp.sql` en DBeaver o en el editor SQL de Supabase.
-2) Copia estos archivos a la raíz de tu repo (junto a `config.js`).
-3) `git add . && git commit -m "mvp" && git push` → Vercel desplegará.
-4) Abre la URL, crea un evento, comparte el código y que la gente entre con su nickname.
+## Pasos
+1) Ejecuta `db_full.sql` en Supabase (DBeaver o editor SQL). Es idempotente.
+2) Sube `index.html`, `styles.css`, `app.js`, `app_dialog_patch.js`, `config.js` a tu repo.
+3) `git push` y prueba en tu URL (crear evento, compartir código).
 
-## Seguridad
-Las políticas RLS están **abiertas** para facilitar el MVP. Cualquiera con el código puede editar.
-Después podemos:
-- Activar **autenticación anónima** (sin email) y:
-- Políticas RLS que sólo permitan modificar filas del usuario/evento.
+## Notas
+- RLS abiertas por simplicidad. Endureceremos después (auth anónima + políticas por usuario/evento).
+- El diálogo de tareas arranca oculto y puede cerrarse clicando el fondo.
