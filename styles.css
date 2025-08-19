@@ -20,10 +20,15 @@ ul{list-style:none;padding:0}
 li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margin:.4rem 0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
 .badge{background:#222;border-radius:.6rem;padding:.15rem .5rem;font-size:.8rem}
 .pill{background:#1e1e1e;border:1px solid #333;border-radius:999px;padding:.15rem .5rem;font-size:.8rem}
-.hidden{display:none}
+
 /* Dialog */
 .dialog{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
 .dialog-card{background:#111;border:1px solid #222;border-radius:1rem;padding:1rem;max-width:420px;width:92%}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.6rem 0}
 .checklist label{display:flex;align-items:center;gap:.5rem;background:#161616;border:1px solid #262626;padding:.4rem;border-radius:.6rem}
+
+/* IMPORTANT: ensure hidden wins over dialog's display */
+.hidden{display:none !important}
+.dialog.hidden{display:none !important}
+
 .row.end{justify-content:flex-end}
