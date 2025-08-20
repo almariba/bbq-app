@@ -71,8 +71,10 @@ function showApp(){
     setSessionInfo();
     showTab("menu");
   } else {
+    // Vista no logueada: solo formulario de acceso
     joinSec.classList.remove("hidden");
     nav.classList.add("hidden");
+    document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
   }
 }
 
@@ -555,6 +557,13 @@ function logout(){
   state.event = null;
   state.me = null;
   state.selections = {};
+  // limpia UI
+  document.getElementById('menu-list').innerHTML = '';
+  document.getElementById('menu-msg').textContent = '';
+  document.getElementById('task-list').innerHTML = '';
+  document.getElementById('expenses').innerHTML = '';
+  document.getElementById('balances').innerHTML = '';
+  document.getElementById('summary').innerHTML = '';
   saveLS();
   showApp();
 }
@@ -582,6 +591,4 @@ el("btn-create").onclick = createEvent;
 showApp();
 if (state.event && state.me){
   afterLogin();
-} else {
-  loadMenu();
 }
