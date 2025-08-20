@@ -1,41 +1,4 @@
-*{box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b0b0b;color:#eaeaea}
-main{max-width:980px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem}
-header{display:flex;justify-content:space-between;align-items:center}
-h1{margin:.5rem 0 1rem 0}
-h2{margin:1rem 0 .5rem}
-label{display:block;margin-top:.5rem;font-size:.9rem;opacity:.9}
-input{width:100%;padding:.6rem;border-radius:.6rem;border:1px solid #333;background:#111;color:#eee;margin:.25rem 0 .5rem}
-button{padding:.6rem .9rem;border:none;border-radius:.8rem;background:#2d7ef7;color:#fff;cursor:pointer}
-button.right{margin-left:auto}
-button:disabled{opacity:.6;cursor:not-allowed}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.grid3{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem}
-.card{background:#111;border:1px solid #222;border-radius:1rem;padding:1rem}
-.hint{opacity:.8;font-size:.9rem}
-.warn{margin-top:1rem;opacity:.9}
-nav{display:flex;gap:.5rem;position:sticky;top:0;background:#0b0b0b;padding:.5rem 0 1rem 0;z-index:2}
-nav.hidden{display:none}
-.tab.hidden{display:none}
-.menu-list{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px,1fr));gap:.75rem}
-.item{background:#111;border:1px solid #222;border-radius:1rem;padding:.8rem}
-.row{display:flex;gap:.5rem;margin:.5rem 0;align-items:center}
-.counter{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
-.counter button{background:#222}
-.counter input{width:4.5rem;text-align:center}
-ul{list-style:none;padding:0}
-li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margin:.4rem 0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-.badge{background:#222;border-radius:.6rem;padding:.15rem .5rem;font-size:.8rem}
-.pill{background:#1e1e1e;border:1px solid #333;border-radius:999px;padding:.15rem .5rem;font-size:.8rem}
-.msg{margin-top:.5rem;opacity:.85}
-#session-info{opacity:.8}
-
-/* Dialog */
-.dialog{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
-.dialog-card{background:#111;border:1px solid #222;border-radius:1rem;padding:1rem;max-width:420px;width:92%}
-.checklist{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.6rem 0}
-.checklist label{display:flex;align-items:center;gap:.5rem;background:#161616;border:1px solid #262626;padding:.4rem;border-radius:.6rem}
-.row.end{justify-content:flex-end}
-
-/* IMPORTANT: ensure hidden wins over dialog's display */
-.hidden{display:none !important}
-.dialog.hidden{display:none !important}
+body{font-family:system-ui;margin:0;background:#0b0b0b;color:#eaeaea}
+/* --- Branding El Charco Puto --- */
+#app-title{font-size:2.2rem;font-weight:800;background:linear-gradient(90deg,#00f5d4,#ff006e,#8338ec);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:2px 2px 6px rgba(0,0,0,.6);letter-spacing:-1px}
+#app-title span{font-style:italic}
