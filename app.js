@@ -1,3 +1,4 @@
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
 
@@ -13,7 +14,8 @@ const state = {
   users: [],       // participantes
   tasks: [],
   performers: {},  // task_id -> [user_id]
-  expenses: []
+  expenses: [],
+  editMode: false  // modo edición de catálogo
 };
 
 const LS_KEY = "bbq-state-v1";
@@ -86,7 +88,7 @@ async function loadMenu(){
   renderMenu();
 }
 
-// Renderiza items con contador
+// Renderiza items con contador (y controles de edición si está activo)
 function renderMenu(){
   const cont = el("menu-list");
   cont.innerHTML = "";
@@ -95,18 +97,25 @@ function renderMenu(){
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <div><strong>${it.name}</strong> <span class="badge">${it.category}</span></div>
-      <small>Unidad: ${it.unit || "ud."}${it.price_estimate ? " · Est: " + euro(it.price_estimate): ""}</small>
+      <div class="row" style="justify-content:space-between;gap:.5rem">
+        <div><strong>${it.name}</strong> <span class="badge">${it.category}</span></div>
+        ${state.editMode ? `<span class="pill">id:${it.id}</span>` : ""}
+      </div>
+      <small>Unidad: ${it.unit || "ud."}${it.price_estimate != null ? " · Est: " + euro(it.price_estimate): ""}</small>
       <div class="counter">
         <button data-id="${it.id}" data-d="-1">−</button>
         <input data-id="${it.id}" type="number" min="0" value="${qty}" />
         <button data-id="${it.id}" data-d="1">+</button>
+        ${state.editMode ? `
+          <button class="btn-edit" data-id="${it.id}" title="Editar">✎</button>
+          <button class="btn-del" data-id="${it.id}" title="Eliminar">🗑️</button>
+        ` : ""}
       </div>
     `;
     cont.appendChild(div);
   }
-  // listeners
-  cont.querySelectorAll("button[data-id]").forEach(btn=>{
+  // listeners contadores
+  cont.querySelectorAll("button[data-id][data-d]").forEach(btn=>{
     btn.onclick = ()=>{
       const id = +btn.dataset.id;
       const d = +btn.dataset.d;
@@ -123,6 +132,18 @@ function renderMenu(){
       state.selections[id] = v;
     };
   });
+  // listeners edición
+  if (state.editMode){
+    cont.querySelectorAll(".btn-edit").forEach(btn=>{
+      btn.onclick = ()=> openEditMenuItem(+btn.dataset.id);
+    });
+    cont.querySelectorAll(".btn-del").forEach(btn=>{
+      btn.onclick = ()=> deleteMenuItem(+btn.dataset.id);
+    });
+    el("btn-add-menu")?.classList.remove("hidden");
+  } else {
+    el("btn-add-menu")?.classList.add("hidden");
+  }
 }
 
 // Guarda selecciones propias
@@ -153,6 +174,88 @@ async function saveSelections(){
     .select();
   if (ins.error){ msg("Error guardando: "+ins.error.message); return; }
   msg("¡Selecciones guardadas!");
+}
+
+// ---- NUEVO: borrar todas mis selecciones ----
+async function clearMySelections(){
+  if (!state.event || !state.me) return;
+  const { error } = await supabase
+    .from("user_selections")
+    .delete()
+    .eq("event_id", state.event.id)
+    .eq("user_id", state.me.id);
+  if (error){ msg("Error al borrar: " + error.message); return; }
+  state.selections = {};
+  renderMenu();
+  msg("Has vaciado todas tus selecciones.");
+}
+
+// ---- NUEVO: edición del catálogo ----
+function toggleEditMode(){
+  state.editMode = !state.editMode;
+  el("btn-toggle-edit").textContent = state.editMode ? "✎ Modo edición (ON)" : "✎ Modo edición";
+  renderMenu();
+}
+
+// Añadir elemento
+async function addMenuItem(){
+  const name = prompt("Nombre del elemento (ej: Salchicha):");
+  if (!name) return;
+  const category = prompt("Categoría (comida, bebida, otros):", "comida") || "otros";
+  const unit = prompt("Unidad (ud., lata, kg...):", "ud.");
+  const priceStr = prompt("Precio estimado (ej: 1.20). Deja vacío si no aplica:", "");
+  const price = priceStr ? parseFloat(priceStr) : null;
+
+  const { error } = await supabase.from("menu_items").insert({
+    name, category, unit, price_estimate: price
+  });
+  if (error){ alert("Error insertando: " + error.message); return; }
+  await loadMenu();
+  msg(`Añadido “${name}” al catálogo.`);
+}
+
+// Editar elemento (incluye precio)
+async function openEditMenuItem(id){
+  const it = state.menu.find(m=>m.id===id);
+  if (!it) return;
+  const name = prompt("Nombre:", it.name);
+  if (!name) return;
+  const category = prompt("Categoría (comida, bebida, otros):", it.category || "otros") || "otros";
+  const unit = prompt("Unidad:", it.unit || "ud.");
+  const priceStr = prompt("Precio estimado (vacío para null):", it.price_estimate ?? "");
+  const price = priceStr === "" ? null : parseFloat(priceStr);
+
+  const { error } = await supabase
+    .from("menu_items")
+    .update({ name, category, unit, price_estimate: price })
+    .eq("id", id);
+  if (error){ alert("Error actualizando: " + error.message); return; }
+  await loadMenu();
+  msg(`Elemento “${name}” actualizado.`);
+}
+
+// Eliminar elemento (borra antes selecciones que lo referencien)
+async function deleteMenuItem(id){
+  const it = state.menu.find(m=>m.id===id);
+  if (!it) return;
+  if (!confirm(`¿Eliminar “${it.name}”? Esto quitará también las selecciones asociadas.`)) return;
+
+  // Borra selecciones que referencian este item para evitar restricción FK
+  const delSel = await supabase
+    .from("user_selections")
+    .delete()
+    .eq("menu_item_id", id);
+  if (delSel.error){ alert("Error borrando selecciones: " + delSel.error.message); return; }
+
+  // Ahora borra el item del catálogo
+  const delItem = await supabase
+    .from("menu_items")
+    .delete()
+    .eq("id", id);
+  if (delItem.error){ alert("Error borrando elemento: " + delItem.error.message); return; }
+
+  await loadMenu();
+  msg(`Elemento “${it.name}” eliminado.`);
 }
 
 // --- Tareas ---
@@ -467,6 +570,9 @@ document.querySelectorAll("nav button[data-tab]").forEach(btn=>{
 });
 el("btn-salir").onclick = logout;
 el("btn-guardar-menu").onclick = saveSelections;
+el("btn-borrar-todo").onclick = clearMySelections;
+el("btn-toggle-edit").onclick = toggleEditMode;
+el("btn-add-menu").onclick = addMenuItem;
 el("btn-add-task").onclick = addTask;
 el("btn-add-expense").onclick = addExpense;
 el("btn-join").onclick = joinEvent;
