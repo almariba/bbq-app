@@ -1,3 +1,4 @@
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY, ADMIN_PIN } from "./config.js";
 
@@ -36,7 +37,7 @@ loadLS();
 
 // --- Utilidades ---
 function el(id){ return document.getElementById(id); }
-function msg(text, id="menu-msg"){ el(id).textContent = text; }
+function msg(text, id="menu-msg"){ const n = el(id); if(n) n.textContent = text; }
 function shortCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
 function euro(n){ return (n||0).toLocaleString("es-ES",{style:"currency",currency:"EUR"}); }
 
@@ -319,7 +320,12 @@ function renderTasks(){
       }
     };
 
-    li.append(btnMine, btnToggle);
+    // --- NUEVO: botón eliminar tarea ---
+    const btnDel = document.createElement("button");
+    btnDel.textContent = "🗑️ Eliminar";
+    btnDel.onclick = ()=> deleteTask(t.id, t.title);
+
+    li.append(btnMine, btnToggle, btnDel);
     ul.appendChild(li);
   }
 }
@@ -351,6 +357,14 @@ async function markPending(task_id){
   if(del.error){ alert(del.error.message); return; }
   const upd = await supabase.from("tasks").update({ status: "pending" }).eq("id", task_id);
   if(upd.error){ alert(upd.error.message); return; }
+  await loadTasks();
+}
+
+// --- NUEVO: eliminar tarea ---
+async function deleteTask(task_id, title){
+  if(!confirm(`¿Eliminar la tarea “${title}”?`)) return;
+  const { error } = await supabase.from("tasks").delete().eq("id", task_id);
+  if(error){ alert(error.message); return; }
   await loadTasks();
 }
 
@@ -402,13 +416,23 @@ function renderExpenses(){
   const box = el("expenses");
   if (state.expenses.length===0){ box.innerHTML = "<p>No hay gastos.</p>"; return; }
   const rows = state.expenses.map(g=>`
-    <div class="row">
+    <div class="row" data-id="${g.id}">
       <span class="badge">${nicknameById(g.payer_user_id)}</span>
       <span style="flex:1">${g.concept}</span>
       <strong>${euro(g.amount)}</strong>
+      <button class="btn-del-expense" title="Eliminar gasto">🗑️</button>
     </div>
   `).join("");
   box.innerHTML = rows;
+
+  // listeners de borrado
+  box.querySelectorAll(".btn-del-expense").forEach(btn=>{
+    btn.onclick = (e)=>{
+      const id = +(e.target.closest(".row").dataset.id);
+      const concept = e.target.closest(".row").querySelector("span[style*='flex:1']").textContent;
+      deleteExpense(id, concept);
+    };
+  });
 }
 
 function renderBalances(){
@@ -443,6 +467,15 @@ async function addExpense(){
   el("g-concept").value = "";
   el("g-amount").value = "";
   await loadExpenses();
+}
+
+// --- NUEVO: eliminar gasto ---
+async function deleteExpense(id, concept){
+  if(!confirm(`¿Eliminar el gasto “${concept}”?`)) return;
+  const { error } = await supabase.from("expenses").delete().eq("id", id);
+  if (error){ alert(error.message); return; }
+  await loadExpenses();
+  renderBalances();
 }
 
 // --- Resumen ---
