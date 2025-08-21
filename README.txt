@@ -1,4 +1,4 @@
-# BBQ Manager — MVP completo unificado
+# El Charco Puto
 Incluye: Menú, Tareas (con realizadores múltiples), Gastos/Balance y Resumen.
 
 ## Pasos
