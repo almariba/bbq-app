@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="es">
 <head>
@@ -18,7 +17,7 @@
       <h2>Entrar o crear charco</h2>
       <div class="grid2">
         <div class="card">
-          <h3>Entrar en un charco</h3>
+          <h3>Entrar en una charco</h3>
           <label>Código del evento</label>
           <input id="event-code" placeholder="p.ej. ABC123" />
           <label>Tu nickname</label>
@@ -31,8 +30,10 @@
           <input id="new-title" placeholder="Charco de verano" />
           <label>Fecha (opcional)</label>
           <input type="date" id="new-date" />
+          <label>PIN de creador</label>
+          <input id="admin-pin" type="password" placeholder="Introduce tu PIN" />
           <button id="btn-create">Crear</button>
-          <p class="hint">Se generará un <strong>código</strong> para compartir con tus amigos.</p>
+          <p class="hint">Se generará un <strong>código</strong> para compartir con tus amigos. Solo quien conozca el <strong>PIN</strong> puede crear.</p>
         </div>
       </div>
       <p class="warn">⚠️ Seguridad básica: abierto para pruebas. Luego endurecemos RLS.</p>

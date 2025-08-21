@@ -1,6 +1,5 @@
-
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY, ADMIN_PIN } from "./config.js";
 
 // Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -512,6 +511,18 @@ async function joinEvent(){
 }
 
 async function createEvent(){
+  // --- Restricción por PIN de administrador ---
+  const pinInput = el("admin-pin");
+  const providedPIN = (pinInput?.value || "").trim();
+  if (!ADMIN_PIN || ADMIN_PIN === "CAMBIA_ESTE_PIN"){
+    alert("Configura ADMIN_PIN en config.js antes de crear eventos.");
+    return;
+  }
+  if (providedPIN !== ADMIN_PIN){
+    alert("PIN incorrecto. Solo el creador puede crear nuevas barbacoas.");
+    return;
+  }
+
   const title = el("new-title").value.trim() || "Barbacoa";
   const date = el("new-date").value || null;
   const code = shortCode();
