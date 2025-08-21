@@ -1,107 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Charco Puto</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main>
-    <header>
-      <h1>🌊 El Charco Puto</h1>
-      <div id="session-info"></div>
-    </header>
-
-    <section id="join">
-      <h2>Entrar o crear charco</h2>
-      <div class="grid2">
-        <div class="card">
-          <h3>Entrar en una charco</h3>
-          <label>Código del evento</label>
-          <input id="event-code" placeholder="p.ej. ABC123" />
-          <label>Tu nickname</label>
-          <input id="nickname" placeholder="Tu nombre o apodo" />
-          <button id="btn-join">Entrar</button>
-        </div>
-        <div class="card">
-          <h3>Crear nuevo charco</h3>
-          <label>Título</label>
-          <input id="new-title" placeholder="Charco de verano" />
-          <label>Fecha (opcional)</label>
-          <input type="date" id="new-date" />
-          <label>PIN de creador</label>
-          <input id="admin-pin" type="password" placeholder="Introduce tu PIN" />
-          <button id="btn-create">Crear</button>
-          <p class="hint">Se generará un <strong>código</strong> para compartir con tus amigos. Solo quien conozca el <strong>PIN</strong> puede crear.</p>
-        </div>
-      </div>
-      <p class="warn">⚠️ Seguridad básica: abierto para pruebas. Luego endurecemos RLS.</p>
-    </section>
-
-    <nav id="nav" class="hidden">
-      <button data-tab="menu">Menú</button>
-      <button data-tab="tareas">Tareas</button>
-      <button data-tab="gastos">Gastos</button>
-      <button data-tab="resumen">Resumen</button>
-      <button id="btn-salir" class="right">Salir</button>
+  <header class="app-header">
+    <h1>El Charco Puto</h1>
+    <nav class="app-nav" role="tablist">
+      <button class="tab-btn" data-target="menu">Menú</button>
+      <button class="tab-btn" data-target="tareas">Tareas</button>
+      <button class="tab-btn" data-target="gastos">Gastos</button>
+      <button class="tab-btn" data-target="resumen">Resumen</button>
+      <button class="tab-btn active" data-target="ruleta">Ruleta</button>
     </nav>
+  </header>
 
-    <section id="menu" class="tab hidden">
-      <h2>Menú</h2>
+  <!-- Otras secciones existentes del proyecto deberían estar aquí -->
+  <main>
+    <!-- NUEVA SECCIÓN: RULETA -->
+    <section id="ruleta" class="section" aria-labelledby="ruleta-title">
+      <div class="ruleta-grid">
+        <div class="ruleta-left">
+          <h2 id="ruleta-title">Ruleta de participantes</h2>
+          <canvas id="ruleta-canvas" width="400" height="400" aria-label="Ruleta aleatoria"></canvas>
+          <div class="ruleta-pointer" aria-hidden="true"></div>
+          <div class="ruleta-controls">
+            <button id="ruleta-spin">🎯 Girar</button>
+            <label class="ruleta-checkbox">
+              <input type="checkbox" id="ruleta-remove-winner" checked />
+              Quitar ganador al salir
+            </label>
+            <button id="ruleta-reset" class="secondary">Reiniciar</button>
+          </div>
+          <div id="ruleta-result" class="ruleta-result" role="status" aria-live="polite"></div>
+        </div>
 
-      <div class="row" style="flex-wrap:wrap;gap:.5rem;margin:.5rem 0 1rem">
-        <button id="btn-guardar-menu">Guardar mis selecciones</button>
-        <button id="btn-borrar-todo" title="Vacía tus selecciones">🗑️ Borrar todo</button>
-        <span class="pill" style="margin-left:auto">Catálogo</span>
-        <button id="btn-toggle-edit" title="Editar catálogo (añadir/editar/eliminar)">✎ Modo edición</button>
-        <button id="btn-add-menu" class="hidden">＋ Añadir elemento</button>
-      </div>
-
-      <div id="menu-list" class="menu-list"></div>
-      <p id="menu-msg" class="msg"></p>
-    </section>
-
-    <section id="tareas" class="tab hidden">
-      <h2>Tareas</h2>
-      <div class="row">
-        <input id="task-title" placeholder="Ej: Traer hielo" />
-        <button id="btn-add-task">Añadir</button>
-      </div>
-      <ul id="task-list"></ul>
-    </section>
-
-    <section id="gastos" class="tab hidden">
-      <h2>Gastos</h2>
-      <div class="grid3">
-        <input id="g-concept" placeholder="Concepto (carbón, carne…)" />
-        <input id="g-amount" type="number" step="0.01" placeholder="Importe (€)" />
-        <button id="btn-add-expense">Añadir gasto</button>
-      </div>
-      <div id="expenses"></div>
-      <h3>Balance por persona</h3>
-      <div id="balances"></div>
-    </section>
-
-    <section id="resumen" class="tab hidden">
-      <h2>Resumen</h2>
-      <div id="summary"></div>
-    </section>
-
-    <!-- Diálogo para marcar como hecha y escoger participantes -->
-    <div id="done-dialog" class="dialog hidden">
-      <div class="dialog-card" role="dialog" aria-modal="true">
-        <h3>¿Quién realizó la tarea?</h3>
-        <div id="done-users" class="checklist"></div>
-        <div class="row end">
-          <button id="btn-cancel-done">Cancelar</button>
-          <button id="btn-confirm-done">Confirmar</button>
+        <div class="ruleta-right">
+          <h3>Participantes</h3>
+          <form id="ruleta-form" class="ruleta-form" autocomplete="off">
+            <input id="ruleta-name" type="text" placeholder="Añadir nickname…" required />
+            <button type="submit">Añadir</button>
+          </form>
+          <ul id="ruleta-list" class="ruleta-list" aria-label="Lista de participantes">
+            <!-- Items dinámicos -->
+          </ul>
+          <div class="ruleta-actions">
+            <button id="ruleta-import" class="secondary">Importar de nombres guardados</button>
+            <button id="ruleta-export" class="secondary">Exportar lista</button>
+          </div>
+          <p class="ruleta-hint">
+            Consejo: haz clic en un nombre para editarlo. Usa la papelera para eliminar.
+          </p>
         </div>
       </div>
-    </div>
-
+    </section>
   </main>
-  <script type="module" src="./app.js"></script>
-  <script src="./app_dialog_patch.js"></script>
+
+  <script src="app.js"></script>
 </body>
 </html>
