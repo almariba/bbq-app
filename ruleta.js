@@ -1,3 +1,4 @@
+
 (() => {
   'use strict';
 
@@ -15,9 +16,8 @@
 #ruleta-canvas{display:block;width:100%;max-width:520px;aspect-ratio:1/1;margin:.25rem auto .75rem;background:radial-gradient(40% 40% at 50% 50%,#0d111a 0%,#0a0d14 60%,#070a12 100%);border-radius:999px;border:6px solid #0a0f19;box-shadow:0 20px 45px rgba(0,0,0,.45),inset 0 0 60px rgba(0,0,0,.35),inset 0 0 8px rgba(255,255,255,.05)}
 #ruleta .ruleta-pointer{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:20px solid #22c55e;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))}
 #ruleta .ruleta-tick{position:absolute;left:50%;top:44px;transform:translateX(-50%);width:10px;height:10px;background:#22c55e;border-radius:50%;box-shadow:0 0 0 4px rgba(34,197,94,.22),0 0 10px rgba(34,197,94,.6)}
-#ruleta .ruleta-controls{margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center}
-#ruleta #ruleta-spin{background:#3b82f6;color:#fff;border:0;padding:.8rem 1.1rem;border-radius:1rem;cursor:pointer;font-weight:800;font-size:1.1rem}
-#ruleta .ruleta-secondary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+#ruleta .ruleta-controls{margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;justify-content:center}
+#ruleta .ruleta-controls button{background:#3b82f6;color:#fff;border:0;padding:.55rem .9rem;border-radius:.8rem;cursor:pointer;font-weight:700}
 #ruleta .ruleta-controls button.secondary{background:#222;color:#eaeaea}
 #ruleta .ruleta-checkbox{display:flex;align-items:center;gap:.5rem;opacity:.9;font-size:.92rem}
 #ruleta .ruleta-result{margin-top:.25rem;text-align:center;font-size:1.1rem;font-weight:800;min-height:1.4rem}
@@ -37,17 +37,10 @@
   }
 
   function createSection(){
-    const existing = $('#ruleta');
-    if (existing){
-      // Si ya existe, asegúrate de que tenga la clase 'tab'
-      if (!existing.classList.contains('tab')) existing.classList.add('tab');
-      if (!existing.classList.contains('hidden')) existing.classList.add('hidden');
-      existing.innerHTML = '';
-      var sec = existing;
-    } else {
-      const sec = document.createElement('section');
+    if ($('#ruleta')) return $('#ruleta');
+    const sec = document.createElement('section');
     sec.id = 'ruleta';
-    sec.className = 'tab hidden';
+    sec.className = 'tab hidden'; // clave: integrarse con tu sistema de pestañas
     sec.setAttribute('aria-labelledby','ruleta-title');
     sec.innerHTML = `
       <h2 id="ruleta-title">Ruleta de participantes</h2>
@@ -60,15 +53,13 @@
           </div>
           <div class="ruleta-controls">
             <button id="ruleta-spin">🎯 Girar</button>
-            <div id="ruleta-result" class="ruleta-result" role="status" aria-live="polite"></div>
             <label class="ruleta-checkbox">
               <input type="checkbox" id="ruleta-remove-winner" checked />
               Quitar ganador al salir
             </label>
-            <div class="ruleta-secondary">
-              <button id="ruleta-reset" class="secondary">Reiniciar</button>
-            </div>
+            <button id="ruleta-reset" class="secondary">Reiniciar</button>
           </div>
+          <div id="ruleta-result" class="ruleta-result" role="status" aria-live="polite"></div>
         </div>
         <div class="ruleta-card">
           <h3>Participantes</h3>
@@ -81,6 +72,7 @@
         </div>
       </div>
     `;
+    // insertar justo después de #resumen (última pestaña) para mantener orden
     const resumen = $('#resumen');
     if (resumen && resumen.parentElement) resumen.parentElement.insertBefore(sec, resumen.nextSibling);
     else (document.querySelector('main')||document.body).appendChild(sec);
@@ -88,9 +80,7 @@
   }
 
   function addNavButton(){
-    // Usa botón existente si ya está en el HTML
-    const existing = document.querySelector('#nav-ruleta, #nav [data-tab="ruleta"]');
-    if (existing) return existing;
+    if ($('#nav-ruleta')) return $('#nav-ruleta');
     const nav = $('#nav');
     if (!nav) return null;
     const salir = $('#btn-salir');
@@ -98,31 +88,33 @@
     btn.id = 'nav-ruleta';
     btn.dataset.tab = 'ruleta';
     btn.textContent = 'Ruleta';
+    // Inserta antes del botón Salir para que quede junto a las otras pestañas
     if (salir) nav.insertBefore(btn, salir);
     else nav.appendChild(btn);
     return btn;
   }
 
+  // Hace que otras pestañas oculten también #ruleta (porque su NodeList inicial no lo conoce)
   function patchOtherTabsHideRuleta(){
     $$('#nav button[data-tab]').forEach(b=>{
       if (b.dataset.tab !== 'ruleta'){
         on(b,'click',()=>{ const r=$('#ruleta'); if(r) r.classList.add('hidden'); });
       }
     });
+    // Ocultar ruleta al pulsar "Salir"
     const salir = $('#btn-salir');
     on(salir,'click',()=>{ const r=$('#ruleta'); if(r) r.classList.add('hidden'); });
   }
 
+  // ====== Palette and drawing ======
   function hsl(h,s,l){ return `hsl(${h} ${s}% ${l}%)`; }
   function palette(n){
-    const out=[]; const golden=137.508; const start=180;
+    const out=[]; const golden=137.508; const start=180; // fijo para consistencia
     for(let i=0;i<n;i++){ const h=(start+i*golden)%360; const s=72; const l=i%2?55:62; out.push(hsl(Math.round(h),s,l)); }
     return out;
   }
 
   function initWheel(){
-    const section = document.getElementById('ruleta');
-
     const canvas = $('#ruleta-canvas'); const ctx = canvas.getContext('2d');
     const listEl = $('#ruleta-list'); const form = $('#ruleta-form'); const input = $('#ruleta-name');
     const btnSpin = $('#ruleta-spin'); const btnReset = $('#ruleta-reset'); const chkRemoveWinner = $('#ruleta-remove-winner'); const resultEl = $('#ruleta-result');
@@ -139,23 +131,10 @@
     on(window,'resize',()=>{ resize(); draw(); });
 
     function renderList(){
-  listEl.innerHTML='';
-  names.forEach((n,i)=>{
-    const li=document.createElement('li'); li.className='ruleta-item';
-
-    const nm=document.createElement('input'); nm.className='name'; nm.value=n;
-    on(nm,'input',()=>{ names[i]=nm.value.trim(); save(names); draw(); });
-
-    const btns=document.createElement('div'); btns.className='btns';
-    const up=document.createElement('button'); up.textContent='↑'; on(up,'click',(e)=>{e.preventDefault(); if(i>0){[names[i-1],names[i]]=[names[i],names[i-1]]; save(names); renderList(); draw();}});
-    const dn=document.createElement('button'); dn.textContent='↓'; on(dn,'click',(e)=>{e.preventDefault(); if(i<names.length-1){[names[i+1],names[i]]=[names[i],names[i+1]]; save(names); renderList(); draw();}});
-    const del=document.createElement('button'); del.className='delete'; del.textContent='🗑'; on(del,'click',(e)=>{e.preventDefault(); names.splice(i,1); save(names); renderList(); draw();});
-
-    btns.append(up,dn,del);
-    li.append(nm,btns);
-    listEl.appendChild(li);
-  });
-});
+      listEl.innerHTML='';
+      names.forEach((n,i)=>{
+        const li=document.createElement('li'); li.className='ruleta-item';
+        const nm=document.createElement('input'); nm.className='name'; nm.value=n; on(nm,'input',()=>{ names[i]=nm.value.trim(); save(names); draw(); });
         const up=document.createElement('button'); up.textContent='↑'; on(up,'click',(e)=>{e.preventDefault(); if(i>0){[names[i-1],names[i]]=[names[i],names[i-1]]; save(names); renderList(); draw();}});
         const dn=document.createElement('button'); dn.textContent='↓'; on(dn,'click',(e)=>{e.preventDefault(); if(i<names.length-1){[names[i+1],names[i]]=[names[i],names[i+1]]; save(names); renderList(); draw();}});
         const del=document.createElement('button'); del.className='delete'; del.textContent='🗑'; on(del,'click',(e)=>{e.preventDefault(); names.splice(i,1); save(names); renderList(); draw();});
@@ -229,18 +208,6 @@
     on(btnReset,'click',(e)=>{ e.preventDefault(); $('#ruleta-result').textContent=''; angle=0; vel=0; winner=-1; draw(); });
 
     renderList(); resize(); draw();
-    // --- FORCE REFRESH when the tab becomes visible ---
-    function __ruletaRefresh(){ try{ resize(); draw(); }catch(e){} }
-    // Hook on nav button
-    const navBtnRefresh = document.querySelector('#nav-ruleta,[data-tab="ruleta"]');
-    if (navBtnRefresh) navBtnRefresh.addEventListener('click', ()=> setTimeout(__ruletaRefresh, 0));
-    // Observe class changes (hidden <-> visible)
-    if (section){
-      const mo = new MutationObserver(()=>{ if(!section.classList.contains('hidden')) __ruletaRefresh(); });
-      mo.observe(section, {attributes:true, attributeFilter:['class']});
-    }
-    // Fallback: refresh shortly after mount
-    setTimeout(__ruletaRefresh, 250);
   }
 
   function mount(){
@@ -248,13 +215,17 @@
     const section = createSection();
     const navBtn = addNavButton();
 
+    // Click en "Ruleta": mostrar como cualquier pestaña
     on(navBtn,'click',(e)=>{
       e.preventDefault();
+      // Oculta todas las tabs visibles (usa selector dinámico)
       $$('.tab').forEach(t=>t.classList.add('hidden'));
       section.classList.remove('hidden');
+      // Marca activa
       $$('#nav button[data-tab]').forEach(b=> b.classList.toggle('active', b===navBtn));
     });
 
+    // Asegurar que otras pestañas y "Salir" ocultan #ruleta
     patchOtherTabsHideRuleta();
 
     initWheel();

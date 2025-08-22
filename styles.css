@@ -1,9 +1,7 @@
-
-*{box-sizing:border-box}
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b0b0b;color:#eaeaea}
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b0b0b;color:#eaeaea}
 main{max-width:980px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem}
-header{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
-h1{margin:.5rem 0 0.25rem 0}
+header{display:flex;justify-content:space-between;align-items:center}
+h1{margin:.5rem 0 1rem 0}
 h2{margin:1rem 0 .5rem}
 label{display:block;margin-top:.5rem;font-size:.9rem;opacity:.9}
 input{width:100%;padding:.6rem;border-radius:.6rem;border:1px solid #333;background:#111;color:#eee;margin:.25rem 0 .5rem}
@@ -20,14 +18,13 @@ nav.hidden{display:none}
 .tab.hidden{display:none}
 .menu-list{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px,1fr));gap:.75rem}
 .item{background:#111;border:1px solid #222;border-radius:1rem;padding:.8rem}
-.row{display:flex;gap:.5rem;margin:.5rem 0;align-items:center;flex-wrap:wrap}
+.row{display:flex;gap:.5rem;margin:.5rem 0;align-items:center}
 .counter{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
 .counter button{background:#222}
 .counter input{width:4.5rem;text-align:center}
-ul{list-style:none;padding:0;margin:0}
-li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margin:.4rem 0;display:flex;flex-direction:column;gap:.5rem}
+ul{list-style:none;padding:0}
+li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margin:.4rem 0;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
 .badge{background:#222;border-radius:.6rem;padding:.15rem .5rem;font-size:.8rem}
-.badge.done{background:#14532d;color:#bbf7d0;border:1px solid #166534}
 .pill{background:#1e1e1e;border:1px solid #333;border-radius:999px;padding:.15rem .5rem;font-size:.8rem}
 .msg{margin-top:.5rem;opacity:.85}
 #session-info{opacity:.8}
@@ -39,60 +36,6 @@ li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margi
 .checklist label{display:flex;align-items:center;gap:.5rem;background:#161616;border:1px solid #262626;padding:.4rem;border-radius:.6rem}
 .row.end{justify-content:flex-end}
 
-/* Task actions stacked below title */
-.task-actions{display:flex;gap:.5rem;flex-wrap:wrap}
-.task-actions button{background:#222}
-.task-title{font-weight:600}
-
-/* Ruleta: hacer el botón Girar protagonista */
-#ruleta-spin{font-size:1.1rem;padding:.8rem 1rem;border-radius:1rem}
-#ruleta .ruleta-controls{display:flex;flex-direction:column;align-items:center;gap:.5rem}
-#ruleta .ruleta-secondary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
-
 /* IMPORTANT: ensure hidden wins over dialog's display */
 .hidden{display:none !important}
 .dialog.hidden{display:none !important}
-
-/* Responsive: móviles */
-@media (max-width: 680px){
-  header{flex-direction:column;align-items:flex-start}
-  #session-info{font-size:.85rem;opacity:.75;margin-top:.15rem}
-  .grid2{grid-template-columns:1fr}
-  .grid3{grid-template-columns:1fr;gap:.6rem}
-  nav{overflow-x:auto}
-  .task-actions button{flex:1} /* botones de tareas a lo ancho si hay espacio */
-}
-
-
-/* ===== UI Tweaks (2025-08-22) ===== */
-
-/* Header: session info under title on mobile already handled; keep as is */
-
-/* MENU: item header -> badge top-right; counters centered; small meta text */
-.item .item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
-.item .item-name{font-weight:700}
-.item .item-cat{margin-left:auto}
-.item .item-meta{display:block;font-size:.82rem;opacity:.85;margin-top:.15rem}
-.counter{justify-content:center} /* center the (- qty +) block */
-
-/* MENU toolbar: bigger touch targets for GUARDAR, 🗑️, ✎, ＋ */
-#menu .row > #btn-guardar-menu{padding:.75rem 1.15rem;border-radius:1rem;font-weight:800;letter-spacing:.02em;min-width:10.5rem}
-#menu .row > #btn-borrar-todo,
-#menu .row > #btn-toggle-edit,
-#menu .row > #btn-add-menu{
-  min-width:3.2rem; min-height:2.8rem; font-size:1.08rem; border-radius:.9rem;
-}
-
-/* TAREAS: long add button; stacked meta under title; actions already placed below */
-#btn-add-task{padding:.7rem 1.2rem; min-width:8rem; border-radius:1rem; font-weight:800}
-li .task-meta{font-size:.88rem; opacity:.9; display:flex; flex-direction:column; gap:.15rem; margin-top:.15rem}
-.badge.done{background:#14532d;color:#bbf7d0;border:1px solid #166534} /* keep green 'done' */
-
-/* RULETA: checkbox full width, centered text; participant buttons under name, horizontal */
-#ruleta .ruleta-checkbox{display:block; width:100%; text-align:center; padding:.25rem 0}
-#ruleta .ruleta-item{display:flex; flex-direction:column; align-items:stretch}
-#ruleta .ruleta-item .name{width:100%}
-#ruleta .ruleta-item .btns{display:flex; gap:.45rem; margin-top:.35rem}
-#ruleta .ruleta-item .btns button{flex:0 0 auto}
-
-#ruleta-canvas{min-width:260px;min-height:260px}

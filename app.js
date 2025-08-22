@@ -1,3 +1,4 @@
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY, ADMIN_PIN } from "./config.js";
 
@@ -98,11 +99,11 @@ function renderMenu(){
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <div class="item-head">
-        <div class="item-name">${it.name}</div>
-        <span class="badge item-cat">${it.category}</span>
+      <div class="row" style="justify-content:space-between;gap:.5rem">
+        <div><strong>${it.name}</strong> <span class="badge">${it.category}</span></div>
+        ${state.editMode ? `<span class="pill">id:${it.id}</span>` : ""}
       </div>
-      <small class="item-meta">Unidad: ${it.unit || "ud."}${it.price_estimate != null ? " · Est: " + euro(it.price_estimate): ""}</small>
+      <small>Unidad: ${it.unit || "ud."}${it.price_estimate != null ? " · Est: " + euro(it.price_estimate): ""}</small>
       <div class="counter">
         <button data-id="${it.id}" data-d="-1">−</button>
         <input data-id="${it.id}" type="number" min="0" value="${qty}" />
@@ -112,7 +113,6 @@ function renderMenu(){
           <button class="btn-del" data-id="${it.id}" title="Eliminar">🗑️</button>
         ` : ""}
       </div>
-      ${state.editMode ? `<div style="margin-top:.25rem"><span class="pill">id:${it.id}</span></div>` : ""}
     `;
     cont.appendChild(div);
   }
@@ -195,7 +195,7 @@ async function clearMySelections(){
 // ---- NUEVO: edición del catálogo ----
 function toggleEditMode(){
   state.editMode = !state.editMode;
-  el("btn-toggle-edit").textContent = state.editMode ? "✎ Modo edición (ON)" : "✎";
+  el("btn-toggle-edit").textContent = state.editMode ? "✎ Modo edición (ON)" : "✎ Modo edición";
   renderMenu();
 }
 
@@ -297,43 +297,21 @@ function renderTasks(){
   ul.innerHTML = "";
   for (const t of state.tasks){
     const li = document.createElement("li");
-
     const mine = t.assigned_to === state.me?.id;
     const perf = state.performers[t.id]||[];
     const perfNames = perf.map(nicknameById).join(", ");
-
-    // Estado visual: check verde si done
-    const statusBadge = t.status === "done"
-      ? '<span class="badge done">✅</span>'
-      : '<span class="badge">⏳</span>';
-
-    const assignedName = mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar");
-
-    const head = document.createElement("div");
-    head.className = "row";
-    head.innerHTML = `
-      ${statusBadge}
-      <span class="task-title" style="flex:1">${t.title}</span>
+    li.innerHTML = `
+      <span class="badge">${t.status}</span>
+      <span style="flex:1">${t.title}</span>
+      <span class="pill">${mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar")}</span>
+      ${perf.length? `<span class="pill">Hecha por: ${perfNames}</span>` : ""}
     `;
-
-    const meta = document.createElement("div");
-    meta.className = "task-meta";
-    meta.innerHTML = `
-      <span>Asignada a: <strong>${assignedName}</strong></span>
-      ${perf.length? `<span>Hecha por: <strong>${perfNames}</strong></span>` : ""}
-    `;
-
-    const actions = document.createElement("div");
-    actions.className = "task-actions";
-
     const btnMine = document.createElement("button");
-    btnMine.title = mine ? "Quitarme" : "Asignarme";
-    btnMine.textContent = mine ? "👤−" : "👤+"; // iconos cortos
+    btnMine.textContent = mine ? "Quitar de mí" : "Asignarme";
     btnMine.onclick = ()=>assignTask(t.id, mine ? null : state.me.id);
 
     const btnToggle = document.createElement("button");
-    btnToggle.title = t.status === "done" ? "Marcar pendiente" : "Marcar hecha";
-    btnToggle.textContent = t.status === "done" ? "↩︎" : "✓";
+    btnToggle.textContent = t.status === "done" ? "↩︎ Pendiente" : "✓ Hecha";
     btnToggle.onclick = ()=>{
       if(t.status==="done"){
         markPending(t.id);
@@ -342,14 +320,12 @@ function renderTasks(){
       }
     };
 
+    // --- NUEVO: botón eliminar tarea ---
     const btnDel = document.createElement("button");
-    btnDel.title = "Eliminar tarea";
-    btnDel.textContent = "🗑️";
+    btnDel.textContent = "🗑️ Eliminar";
     btnDel.onclick = ()=> deleteTask(t.id, t.title);
 
-    actions.append(btnMine, btnToggle, btnDel);
-
-    li.append(head, meta, actions);
+    li.append(btnMine, btnToggle, btnDel);
     ul.appendChild(li);
   }
 }

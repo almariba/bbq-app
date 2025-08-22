@@ -2,10 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <!-- Mejoras para móvil -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>El Charco Puto</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -20,15 +17,15 @@
       <h2>Entrar o crear charco</h2>
       <div class="grid2">
         <div class="card">
-          <h3>ENTRAR</h3>
+          <h3>Entrar en una charco</h3>
           <label>Código del evento</label>
-          <input id="event-code" placeholder="ABC123" />
+          <input id="event-code" placeholder="p.ej. ABC123" />
           <label>Tu nickname</label>
-          <input id="nickname" placeholder="Nombre o apodo" />
+          <input id="nickname" placeholder="Tu nombre o apodo" />
           <button id="btn-join">Entrar</button>
         </div>
         <div class="card">
-          <h3>CREAR NUEVO</h3>
+          <h3>Crear nuevo charco</h3>
           <label>Título</label>
           <input id="new-title" placeholder="Charco de verano" />
           <label>Fecha (opcional)</label>
@@ -36,8 +33,10 @@
           <label>PIN de creador</label>
           <input id="admin-pin" type="password" placeholder="Introduce tu PIN" />
           <button id="btn-create">Crear</button>
+          <p class="hint">Se generará un <strong>código</strong> para compartir con tus amigos. Solo quien conozca el <strong>PIN</strong> puede crear.</p>
         </div>
       </div>
+      <p class="warn">⚠️ Seguridad básica: abierto para pruebas. Luego endurecemos RLS.</p>
     </section>
 
     <nav id="nav" class="hidden">
@@ -45,7 +44,6 @@
       <button data-tab="tareas">Tareas</button>
       <button data-tab="gastos">Gastos</button>
       <button data-tab="resumen">Resumen</button>
-      <button data-tab="ruleta" id="nav-ruleta">Ruleta</button>
       <button id="btn-salir" class="right">Salir</button>
     </nav>
 
@@ -53,10 +51,11 @@
       <h2>Menú</h2>
 
       <div class="row" style="flex-wrap:wrap;gap:.5rem;margin:.5rem 0 1rem">
-        <button id="btn-guardar-menu">GUARDAR</button>
-        <button id="btn-borrar-todo" title="Vacía tus selecciones">🗑️</button>
-        <button id="btn-toggle-edit" title="Editar catálogo (añadir/editar/eliminar)">✎</button>
-        <button id="btn-add-menu" class="hidden">＋</button>
+        <button id="btn-guardar-menu">Guardar mis selecciones</button>
+        <button id="btn-borrar-todo" title="Vacía tus selecciones">🗑️ Borrar todo</button>
+        <span class="pill" style="margin-left:auto">Catálogo</span>
+        <button id="btn-toggle-edit" title="Editar catálogo (añadir/editar/eliminar)">✎ Modo edición</button>
+        <button id="btn-add-menu" class="hidden">＋ Añadir elemento</button>
       </div>
 
       <div id="menu-list" class="menu-list"></div>
@@ -67,7 +66,7 @@
       <h2>Tareas</h2>
       <div class="row">
         <input id="task-title" placeholder="Ej: Traer hielo" />
-        <button id="btn-add-task">＋</button>
+        <button id="btn-add-task">Añadir</button>
       </div>
       <ul id="task-list"></ul>
     </section>
@@ -87,38 +86,6 @@
     <section id="resumen" class="tab hidden">
       <h2>Resumen</h2>
       <div id="summary"></div>
-    </section>
-
-    <!-- NUEVO: Sección RUleta fija en el HTML -->
-    <section id="ruleta" class="tab hidden" aria-labelledby="ruleta-title">
-      <h2 id="ruleta-title">Ruleta de participantes</h2>
-      <div class="ruleta-grid">
-        <div class="ruleta-card">
-          <div style="position:relative">
-            <canvas id="ruleta-canvas" width="420" height="420" aria-label="Ruleta aleatoria"></canvas>
-            <div class="ruleta-pointer" aria-hidden="true"></div>
-            <div class="ruleta-tick" aria-hidden="true"></div>
-          </div>
-          <div class="ruleta-controls">
-            <button id="ruleta-spin">🎯 Girar</button>
-            <label class="ruleta-checkbox" for="ruleta-remove-winner">
-              <input type="checkbox" id="ruleta-remove-winner" checked />
-              Quitar ganador al salir
-            </label>
-            <button id="ruleta-reset" class="secondary">Reiniciar</button>
-          </div>
-          <div id="ruleta-result" class="ruleta-result" role="status" aria-live="polite"></div>
-        </div>
-        <div class="ruleta-card">
-          <h3>Participantes</h3>
-          <form id="ruleta-form" class="ruleta-form" autocomplete="off">
-            <input id="ruleta-name" type="text" placeholder="Añadir nickname…" required />
-            <button type="submit">Añadir</button>
-          </form>
-          <ul id="ruleta-list" class="ruleta-list" aria-label="Lista de participantes"></ul>
-          <p class="ruleta-hint">Pulsa un nombre para editarlo. ↑/↓ reordenan. 🗑 elimina.</p>
-        </div>
-      </div>
     </section>
 
     <!-- Diálogo para marcar como hecha y escoger participantes -->
