@@ -1,4 +1,3 @@
-
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY, ADMIN_PIN } from "./config.js";
 
@@ -195,7 +194,7 @@ async function clearMySelections(){
 // ---- NUEVO: edición del catálogo ----
 function toggleEditMode(){
   state.editMode = !state.editMode;
-  el("btn-toggle-edit").textContent = state.editMode ? "✎ Modo edición (ON)" : "✎ Modo edición";
+  el("btn-toggle-edit").textContent = state.editMode ? "✎ Modo edición (ON)" : "✎";
   renderMenu();
 }
 
@@ -297,21 +296,38 @@ function renderTasks(){
   ul.innerHTML = "";
   for (const t of state.tasks){
     const li = document.createElement("li");
+
     const mine = t.assigned_to === state.me?.id;
     const perf = state.performers[t.id]||[];
     const perfNames = perf.map(nicknameById).join(", ");
-    li.innerHTML = `
-      <span class="badge">${t.status}</span>
-      <span style="flex:1">${t.title}</span>
-      <span class="pill">${mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar")}</span>
+
+    // Estado visual: check verde si done
+    const statusBadge = t.status === "done"
+      ? '<span class="badge done">✅</span>'
+      : '<span class="badge">⏳</span>';
+
+    const assigned = mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar");
+
+    const head = document.createElement("div");
+    head.className = "row";
+    head.innerHTML = `
+      ${statusBadge}
+      <span class="task-title" style="flex:1">${t.title}</span>
+      <span class="pill">${assigned}</span>
       ${perf.length? `<span class="pill">Hecha por: ${perfNames}</span>` : ""}
     `;
+
+    const actions = document.createElement("div");
+    actions.className = "task-actions";
+
     const btnMine = document.createElement("button");
-    btnMine.textContent = mine ? "Quitar de mí" : "Asignarme";
+    btnMine.title = mine ? "Quitarme" : "Asignarme";
+    btnMine.textContent = mine ? "👤−" : "👤+"; // iconos cortos
     btnMine.onclick = ()=>assignTask(t.id, mine ? null : state.me.id);
 
     const btnToggle = document.createElement("button");
-    btnToggle.textContent = t.status === "done" ? "↩︎ Pendiente" : "✓ Hecha";
+    btnToggle.title = t.status === "done" ? "Marcar pendiente" : "Marcar hecha";
+    btnToggle.textContent = t.status === "done" ? "↩︎" : "✓";
     btnToggle.onclick = ()=>{
       if(t.status==="done"){
         markPending(t.id);
@@ -320,12 +336,14 @@ function renderTasks(){
       }
     };
 
-    // --- NUEVO: botón eliminar tarea ---
     const btnDel = document.createElement("button");
-    btnDel.textContent = "🗑️ Eliminar";
+    btnDel.title = "Eliminar tarea";
+    btnDel.textContent = "🗑️";
     btnDel.onclick = ()=> deleteTask(t.id, t.title);
 
-    li.append(btnMine, btnToggle, btnDel);
+    actions.append(btnMine, btnToggle, btnDel);
+
+    li.append(head, actions);
     ul.appendChild(li);
   }
 }

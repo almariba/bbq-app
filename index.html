@@ -20,15 +20,15 @@
       <h2>Entrar o crear charco</h2>
       <div class="grid2">
         <div class="card">
-          <h3>Entrar en una charco</h3>
+          <h3>ENTRAR</h3>
           <label>Código del evento</label>
-          <input id="event-code" placeholder="p.ej. ABC123" />
+          <input id="event-code" placeholder="ABC123" />
           <label>Tu nickname</label>
-          <input id="nickname" placeholder="Tu nombre o apodo" />
+          <input id="nickname" placeholder="Nombre o apodo" />
           <button id="btn-join">Entrar</button>
         </div>
         <div class="card">
-          <h3>Crear nuevo charco</h3>
+          <h3>CREAR NUEVO</h3>
           <label>Título</label>
           <input id="new-title" placeholder="Charco de verano" />
           <label>Fecha (opcional)</label>
@@ -36,10 +36,8 @@
           <label>PIN de creador</label>
           <input id="admin-pin" type="password" placeholder="Introduce tu PIN" />
           <button id="btn-create">Crear</button>
-          <p class="hint">Se generará un <strong>código</strong> para compartir con tus amigos. Solo quien conozca el <strong>PIN</strong> puede crear.</p>
         </div>
       </div>
-      <p class="warn">⚠️ Seguridad básica: abierto para pruebas. Luego endurecemos RLS.</p>
     </section>
 
     <nav id="nav" class="hidden">
@@ -54,11 +52,10 @@
       <h2>Menú</h2>
 
       <div class="row" style="flex-wrap:wrap;gap:.5rem;margin:.5rem 0 1rem">
-        <button id="btn-guardar-menu">Guardar mis selecciones</button>
-        <button id="btn-borrar-todo" title="Vacía tus selecciones">🗑️ Borrar todo</button>
-        <span class="pill" style="margin-left:auto">Catálogo</span>
-        <button id="btn-toggle-edit" title="Editar catálogo (añadir/editar/eliminar)">✎ Modo edición</button>
-        <button id="btn-add-menu" class="hidden">＋ Añadir elemento</button>
+        <button id="btn-guardar-menu">GUARDAR</button>
+        <button id="btn-borrar-todo" title="Vacía tus selecciones">🗑️</button>
+        <button id="btn-toggle-edit" title="Editar catálogo (añadir/editar/eliminar)">✎</button>
+        <button id="btn-add-menu" class="hidden">＋</button>
       </div>
 
       <div id="menu-list" class="menu-list"></div>
@@ -69,7 +66,7 @@
       <h2>Tareas</h2>
       <div class="row">
         <input id="task-title" placeholder="Ej: Traer hielo" />
-        <button id="btn-add-task">Añadir</button>
+        <button id="btn-add-task">＋</button>
       </div>
       <ul id="task-list"></ul>
     </section>
