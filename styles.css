@@ -94,3 +94,5 @@ li .task-meta{font-size:.88rem; opacity:.9; display:flex; flex-direction:column;
 #ruleta .ruleta-item .name{width:100%}
 #ruleta .ruleta-item .btns{display:flex; gap:.45rem; margin-top:.35rem}
 #ruleta .ruleta-item .btns button{flex:0 0 auto}
+
+#ruleta-canvas{min-width:260px;min-height:260px}

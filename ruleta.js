@@ -121,6 +121,8 @@
   }
 
   function initWheel(){
+    const section = document.getElementById('ruleta');
+
     const canvas = $('#ruleta-canvas'); const ctx = canvas.getContext('2d');
     const listEl = $('#ruleta-list'); const form = $('#ruleta-form'); const input = $('#ruleta-name');
     const btnSpin = $('#ruleta-spin'); const btnReset = $('#ruleta-reset'); const chkRemoveWinner = $('#ruleta-remove-winner'); const resultEl = $('#ruleta-result');
@@ -227,6 +229,18 @@
     on(btnReset,'click',(e)=>{ e.preventDefault(); $('#ruleta-result').textContent=''; angle=0; vel=0; winner=-1; draw(); });
 
     renderList(); resize(); draw();
+    // --- FORCE REFRESH when the tab becomes visible ---
+    function __ruletaRefresh(){ try{ resize(); draw(); }catch(e){} }
+    // Hook on nav button
+    const navBtnRefresh = document.querySelector('#nav-ruleta,[data-tab="ruleta"]');
+    if (navBtnRefresh) navBtnRefresh.addEventListener('click', ()=> setTimeout(__ruletaRefresh, 0));
+    // Observe class changes (hidden <-> visible)
+    if (section){
+      const mo = new MutationObserver(()=>{ if(!section.classList.contains('hidden')) __ruletaRefresh(); });
+      mo.observe(section, {attributes:true, attributeFilter:['class']});
+    }
+    // Fallback: refresh shortly after mount
+    setTimeout(__ruletaRefresh, 250);
   }
 
   function mount(){
