@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <!-- Mejoras para móvil -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -45,6 +44,8 @@
       <button data-tab="tareas">Tareas</button>
       <button data-tab="gastos">Gastos</button>
       <button data-tab="resumen">Resumen</button>
+      <!-- Botón RUleta estático para evitar que desaparezca -->
+      <button id="nav-ruleta" data-tab="ruleta">Ruleta</button>
       <button id="btn-salir" class="right">Salir</button>
     </nav>
 
@@ -86,6 +87,11 @@
     <section id="resumen" class="tab hidden">
       <h2>Resumen</h2>
       <div id="summary"></div>
+    </section>
+
+    <!-- Placeholder fijo para Ruleta, el contenido lo monta ruleta.js -->
+    <section id="ruleta" class="tab hidden" aria-labelledby="ruleta-title">
+      <!-- ruleta.js inyecta aquí el canvas y controles si detecta este contenedor -->
     </section>
 
     <!-- Diálogo para marcar como hecha y escoger participantes -->

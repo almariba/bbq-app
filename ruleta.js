@@ -37,8 +37,15 @@
   }
 
   function createSection(){
-    if ($('#ruleta')) return $('#ruleta');
-    const sec = document.createElement('section');
+    const existing = $('#ruleta');
+    if (existing){
+      // Si ya existe, asegúrate de que tenga la clase 'tab'
+      if (!existing.classList.contains('tab')) existing.classList.add('tab');
+      if (!existing.classList.contains('hidden')) existing.classList.add('hidden');
+      existing.innerHTML = '';
+      var sec = existing;
+    } else {
+      const sec = document.createElement('section');
     sec.id = 'ruleta';
     sec.className = 'tab hidden';
     sec.setAttribute('aria-labelledby','ruleta-title');
@@ -81,7 +88,9 @@
   }
 
   function addNavButton(){
-    if ($('#nav-ruleta')) return $('#nav-ruleta');
+    // Usa botón existente si ya está en el HTML
+    const existing = document.querySelector('#nav-ruleta, #nav [data-tab="ruleta"]');
+    if (existing) return existing;
     const nav = $('#nav');
     if (!nav) return null;
     const salir = $('#btn-salir');
