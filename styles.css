@@ -62,3 +62,35 @@ li{background:#111;border:1px solid #222;border-radius:.8rem;padding:.6rem;margi
   nav{overflow-x:auto}
   .task-actions button{flex:1} /* botones de tareas a lo ancho si hay espacio */
 }
+
+
+/* ===== UI Tweaks (2025-08-22) ===== */
+
+/* Header: session info under title on mobile already handled; keep as is */
+
+/* MENU: item header -> badge top-right; counters centered; small meta text */
+.item .item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.item .item-name{font-weight:700}
+.item .item-cat{margin-left:auto}
+.item .item-meta{display:block;font-size:.82rem;opacity:.85;margin-top:.15rem}
+.counter{justify-content:center} /* center the (- qty +) block */
+
+/* MENU toolbar: bigger touch targets for GUARDAR, 🗑️, ✎, ＋ */
+#menu .row > #btn-guardar-menu{padding:.75rem 1.15rem;border-radius:1rem;font-weight:800;letter-spacing:.02em;min-width:10.5rem}
+#menu .row > #btn-borrar-todo,
+#menu .row > #btn-toggle-edit,
+#menu .row > #btn-add-menu{
+  min-width:3.2rem; min-height:2.8rem; font-size:1.08rem; border-radius:.9rem;
+}
+
+/* TAREAS: long add button; stacked meta under title; actions already placed below */
+#btn-add-task{padding:.7rem 1.2rem; min-width:8rem; border-radius:1rem; font-weight:800}
+li .task-meta{font-size:.88rem; opacity:.9; display:flex; flex-direction:column; gap:.15rem; margin-top:.15rem}
+.badge.done{background:#14532d;color:#bbf7d0;border:1px solid #166534} /* keep green 'done' */
+
+/* RULETA: checkbox full width, centered text; participant buttons under name, horizontal */
+#ruleta .ruleta-checkbox{display:block; width:100%; text-align:center; padding:.25rem 0}
+#ruleta .ruleta-item{display:flex; flex-direction:column; align-items:stretch}
+#ruleta .ruleta-item .name{width:100%}
+#ruleta .ruleta-item .btns{display:flex; gap:.45rem; margin-top:.35rem}
+#ruleta .ruleta-item .btns button{flex:0 0 auto}

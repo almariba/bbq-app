@@ -98,11 +98,11 @@ function renderMenu(){
     const div = document.createElement("div");
     div.className = "item";
     div.innerHTML = `
-      <div class="row" style="justify-content:space-between;gap:.5rem">
-        <div><strong>${it.name}</strong> <span class="badge">${it.category}</span></div>
-        ${state.editMode ? `<span class="pill">id:${it.id}</span>` : ""}
+      <div class="item-head">
+        <div class="item-name">${it.name}</div>
+        <span class="badge item-cat">${it.category}</span>
       </div>
-      <small>Unidad: ${it.unit || "ud."}${it.price_estimate != null ? " · Est: " + euro(it.price_estimate): ""}</small>
+      <small class="item-meta">Unidad: ${it.unit || "ud."}${it.price_estimate != null ? " · Est: " + euro(it.price_estimate): ""}</small>
       <div class="counter">
         <button data-id="${it.id}" data-d="-1">−</button>
         <input data-id="${it.id}" type="number" min="0" value="${qty}" />
@@ -112,6 +112,7 @@ function renderMenu(){
           <button class="btn-del" data-id="${it.id}" title="Eliminar">🗑️</button>
         ` : ""}
       </div>
+      ${state.editMode ? `<div style="margin-top:.25rem"><span class="pill">id:${it.id}</span></div>` : ""}
     `;
     cont.appendChild(div);
   }
@@ -306,15 +307,20 @@ function renderTasks(){
       ? '<span class="badge done">✅</span>'
       : '<span class="badge">⏳</span>';
 
-    const assigned = mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar");
+    const assignedName = mine ? "Yo" : (t.assigned_to ? nicknameById(t.assigned_to) : "sin asignar");
 
     const head = document.createElement("div");
     head.className = "row";
     head.innerHTML = `
       ${statusBadge}
       <span class="task-title" style="flex:1">${t.title}</span>
-      <span class="pill">${assigned}</span>
-      ${perf.length? `<span class="pill">Hecha por: ${perfNames}</span>` : ""}
+    `;
+
+    const meta = document.createElement("div");
+    meta.className = "task-meta";
+    meta.innerHTML = `
+      <span>Asignada a: <strong>${assignedName}</strong></span>
+      ${perf.length? `<span>Hecha por: <strong>${perfNames}</strong></span>` : ""}
     `;
 
     const actions = document.createElement("div");
@@ -343,7 +349,7 @@ function renderTasks(){
 
     actions.append(btnMine, btnToggle, btnDel);
 
-    li.append(head, actions);
+    li.append(head, meta, actions);
     ul.appendChild(li);
   }
 }

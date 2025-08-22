@@ -128,10 +128,23 @@
     on(window,'resize',()=>{ resize(); draw(); });
 
     function renderList(){
-      listEl.innerHTML='';
-      names.forEach((n,i)=>{
-        const li=document.createElement('li'); li.className='ruleta-item';
-        const nm=document.createElement('input'); nm.className='name'; nm.value=n; on(nm,'input',()=>{ names[i]=nm.value.trim(); save(names); draw(); });
+  listEl.innerHTML='';
+  names.forEach((n,i)=>{
+    const li=document.createElement('li'); li.className='ruleta-item';
+
+    const nm=document.createElement('input'); nm.className='name'; nm.value=n;
+    on(nm,'input',()=>{ names[i]=nm.value.trim(); save(names); draw(); });
+
+    const btns=document.createElement('div'); btns.className='btns';
+    const up=document.createElement('button'); up.textContent='↑'; on(up,'click',(e)=>{e.preventDefault(); if(i>0){[names[i-1],names[i]]=[names[i],names[i-1]]; save(names); renderList(); draw();}});
+    const dn=document.createElement('button'); dn.textContent='↓'; on(dn,'click',(e)=>{e.preventDefault(); if(i<names.length-1){[names[i+1],names[i]]=[names[i],names[i+1]]; save(names); renderList(); draw();}});
+    const del=document.createElement('button'); del.className='delete'; del.textContent='🗑'; on(del,'click',(e)=>{e.preventDefault(); names.splice(i,1); save(names); renderList(); draw();});
+
+    btns.append(up,dn,del);
+    li.append(nm,btns);
+    listEl.appendChild(li);
+  });
+});
         const up=document.createElement('button'); up.textContent='↑'; on(up,'click',(e)=>{e.preventDefault(); if(i>0){[names[i-1],names[i]]=[names[i],names[i-1]]; save(names); renderList(); draw();}});
         const dn=document.createElement('button'); dn.textContent='↓'; on(dn,'click',(e)=>{e.preventDefault(); if(i<names.length-1){[names[i+1],names[i]]=[names[i],names[i+1]]; save(names); renderList(); draw();}});
         const del=document.createElement('button'); del.className='delete'; del.textContent='🗑'; on(del,'click',(e)=>{e.preventDefault(); names.splice(i,1); save(names); renderList(); draw();});
